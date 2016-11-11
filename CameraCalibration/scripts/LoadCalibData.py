@@ -67,19 +67,23 @@ def calibrateCamera3D(data):
     print final
     return final
 
-def visualisecameraCalibration3D(data, P):
-    print(data.shape[0])
-    print(P[0]*data[0][3])/(P[2]*data[0][3])
-    m1 = P[0].transpose()
-    m2 = P[1].transpose()
-    m3 = P[2].transpose()
-    x = np.array([m1], [m2], [m3])
-    xy = np.zeros((data.shape[0], 2))
+def visualiseCameraCalibration3D(data, P):
+    
+    p = np.zeros((data.shape[0], 4))
     for s in range(0,data.shape[0]):
-        #xy[s][0] = (P[0].transpose()*data[s][3])/(P[2].transpose()*data[s][3])
-        #xy[s][1] = (P[1].transpose()*data[s][4])/(P[2].transpose()*data[s][4])
-        print("x")
+        p[s][0] = data[s][0]
+        p[s][1] = data[s][1]
+        p[s][2] = data[s][2]
+	    p[s][3] = 1
 
+    p = p.transpose()
+    
+    tx = np.dot(P, p)
+
+    xy = np.zeros((data.shape[0],2))
+    for s in range(0,data.shape[0]):
+	    xy[s][0] = (tx[0][s]/tx[2][s])
+	    xy[s][1] = (tx[1][s]/tx[2][s])
     fig = plt.figure()
     ax = fig.gca()
     ax.plot(data[:, 3], data[:, 4], 'r.', xy[:,0], xy[:,1], 'b.')
@@ -89,9 +93,33 @@ def visualisecameraCalibration3D(data, P):
 
 
 def evaluateCameraCalibration(data, P):
-    # (double[], double[])
+    p = np.zeros((data.shape[0], 4))
+    for s in range(0,data.shape[0]):
+        p[s][0] = data[s][0]
+        p[s][1] = data[s][1]
+        p[s][2] = data[s][2]
+	    p[s][3] = 1
+
+    p = p.transpose()
+    
+    tx = np.dot(P, p)
+
+    xy = np.zeros((data.shape[0],2))
+    for s in range(0,data.shape[0]):
+	    xy[s][0] = (tx[0][s]/tx[2][s])
+	    xy[s][1] = (tx[1][s]/tx[2][s])
+
+    f = np.zeros((data.shape[0],2))
+    for s in range(0,data.shape[0]):
+	    f[s][0] = (xy[s][0]-data[s][0])
+	    f[s][1] = (xy[s][1]-data[s][1])
+
+    print(np.mean(f))
+    print(np.var(f))
+    print(np.min(f))
+    print(np.max(f))
     return
 
 P = calibrateCamera3D(data)
-visualisecameraCalibration3D(data, P)
-# evaluateCameraCalibration(data, P)
+visualiseCameraCalibration3D(data, P)
+evaluateCameraCalibration(data, P)
