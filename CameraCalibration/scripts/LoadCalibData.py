@@ -109,10 +109,14 @@ def evaluateCameraCalibration(data, P):
 	    xy[s][0] = (tx[0][s]/tx[2][s])
 	    xy[s][1] = (tx[1][s]/tx[2][s])
 
-    f = np.zeros((data.shape[0],2))
+    f = np.zeros((data.shape[0],1))
     for s in range(0,data.shape[0]):
-	    f[s][0] = (xy[s][0]-data[s][0])
-	    f[s][1] = (xy[s][1]-data[s][1])
+	#f[s][0] = ((xy[s][0]-data[s][0])**2 + (xy[s][1]-data[s][1])**2)**0.5
+	x2 = (xy[s][0]-data[s][0])*(xy[s][0]-data[s][0])
+	y2 = (xy[s][1]-data[s][1])*(xy[s][1]-data[s][1])
+	x2y2= x2+y2
+	sqrt = x2y2**(1/2)
+	f[s][0] = sqrt
 
     print(np.mean(f))
     print(np.var(f))
