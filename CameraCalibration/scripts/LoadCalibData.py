@@ -1,5 +1,6 @@
 '''Visualises the data file for cs410 camera calibration assignment
 To run: %run LoadCalibData.py
+Conor Kiernan - 13512343
 '''
 import numpy as np
 import matplotlib.pyplot as plt
